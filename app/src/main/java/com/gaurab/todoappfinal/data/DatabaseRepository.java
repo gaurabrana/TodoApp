@@ -32,6 +32,10 @@ public class DatabaseRepository {
         return allTodoTask;
     }
 
+    public LiveData<List<Task>> getSingleTask(long id) {
+        return taskDao.getSingleTask(id);
+    }
+
     public void setAllTodoTask(LiveData<List<Task>> allTodoTask) {
         this.allTodoTask = allTodoTask;
     }
