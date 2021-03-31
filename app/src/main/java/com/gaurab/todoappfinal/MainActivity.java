@@ -8,29 +8,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.gaurab.todoappfinal.adapter.OnTaskClickListener;
 import com.gaurab.todoappfinal.adapter.RecyclerViewAdapter;
-import com.gaurab.todoappfinal.model.Priority;
+import com.gaurab.todoappfinal.model.SharedViewModel;
 import com.gaurab.todoappfinal.model.Task;
 import com.gaurab.todoappfinal.model.TaskViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Calendar;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnTaskClickListener {
 
     private static final String TAG = "Task";
     BottomSheetFragment bottomSheetFragment;
     private TaskViewModel taskViewModel;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
+    private SharedViewModel sharedViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +46,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         taskViewModel = new ViewModelProvider.AndroidViewModelFactory(MainActivity.this.getApplication()).create(TaskViewModel.class);
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
 
         taskViewModel.getallTasks().observe(this, tasks -> {
-            recyclerViewAdapter = new RecyclerViewAdapter(tasks);
+            recyclerViewAdapter = new RecyclerViewAdapter(tasks, this);
             recyclerView.setAdapter(recyclerViewAdapter);
         });
 
@@ -59,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                sharedViewModel.setIsEdit(false);
                 showBottomSheetDialog();
             }
         });
@@ -88,5 +87,19 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onTaskClick(Task task) {
+    sharedViewModel.selectItem(task);
+    sharedViewModel.setIsEdit(true);
+    showBottomSheetDialog();
+    }
+
+    @Override
+    public void onTodoRadioButtonClock(Task task) {
+
+        TaskViewModel.delete(task);
+        recyclerViewAdapter.notifyDataSetChanged();
     }
 }
