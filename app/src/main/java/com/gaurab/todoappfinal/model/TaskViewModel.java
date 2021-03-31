@@ -5,7 +5,6 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.room.Database;
 
 import com.gaurab.todoappfinal.data.DatabaseRepository;
 
@@ -36,6 +35,10 @@ public class TaskViewModel extends AndroidViewModel {
 
     public static void delete(Task task){
         repository.delete(task);
+    }
+
+    public static void deleteAll(){
+        repository.deleteAll();
     }
 
 

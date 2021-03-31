@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @Database(entities = {Task.class}, version = 1, exportSchema = false)
-@TypeConverters(DateConverter.class)
+@TypeConverters(Converter.class)
 public  abstract class TaskRoomDatabase extends RoomDatabase {
     public abstract TaskDao taskDao();
 

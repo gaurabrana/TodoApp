@@ -48,8 +48,12 @@ public class DatabaseRepository {
         new deleteTodoAysncTask(taskDao).execute(task);
     }
 
-    public void update(Task eTodo){
-        new updateTodoAysncTask(taskDao).execute(eTodo);
+    public void update(Task task){
+        new updateTodoAysncTask(taskDao).execute(task);
+    }
+
+    public void deleteAll(){
+        new deleteAllTodoAysncTask(taskDao).execute();
     }
 
     private static class insertTodoAysncTask extends AsyncTask<Task, Void, Void> {
