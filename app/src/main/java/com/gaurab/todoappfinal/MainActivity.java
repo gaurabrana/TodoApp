@@ -3,6 +3,8 @@ package com.gaurab.todoappfinal;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.gaurab.todoappfinal.adapter.RecyclerViewAdapter;
 import com.gaurab.todoappfinal.model.Priority;
 import com.gaurab.todoappfinal.model.Task;
 import com.gaurab.todoappfinal.model.TaskViewModel;
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "Task";
 
     private TaskViewModel taskViewModel;
+    private RecyclerView recyclerView;
+    private RecyclerViewAdapter recyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +35,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        recyclerView = findViewById(R.id.recycler_view);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
         taskViewModel = new ViewModelProvider.AndroidViewModelFactory(MainActivity.this.getApplication()).create(TaskViewModel.class);
 
         taskViewModel.getallTasks().observe(this, tasks -> {
-            for (Task task : tasks){
-            Log.d(TAG, "oncreate: " + task.getTask());
-            }
+            recyclerViewAdapter = new RecyclerViewAdapter(tasks);
+            recyclerView.setAdapter(recyclerViewAdapter);
         });
 
         FloatingActionButton fab = findViewById(R.id.fab);
