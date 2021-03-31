@@ -20,6 +20,8 @@ import com.gaurab.todoappfinal.model.TaskViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Calendar;
+
 public class MainActivity extends AppCompatActivity implements OnTaskClickListener {
 
     private static final String TAG = "Task";
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private SharedViewModel sharedViewModel;
+    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         bottomSheetFragment = new BottomSheetFragment();
         ConstraintLayout constraintLayout = findViewById(R.id.bottomSheet);
@@ -58,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
             @Override
             public void onClick(View view) {
                 sharedViewModel.setIsEdit(false);
+                sharedViewModel.setisNew(true);
                 showBottomSheetDialog();
             }
         });
@@ -93,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     public void onTaskClick(Task task) {
     sharedViewModel.selectItem(task);
     sharedViewModel.setIsEdit(true);
+    sharedViewModel.setisNew(false);
     showBottomSheetDialog();
     }
 

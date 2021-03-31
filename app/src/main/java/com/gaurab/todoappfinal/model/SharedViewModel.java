@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModel;
 public class SharedViewModel extends ViewModel {
 
     private final MutableLiveData<Task> selectedItem = new MutableLiveData<>();
-    private boolean isEdit;
+    private boolean isEdit,isNew;
+
 
     public void selectItem(Task task){
         selectedItem.setValue(task);
@@ -24,5 +25,15 @@ public class SharedViewModel extends ViewModel {
     public boolean getIsEdit(){
         return isEdit;
     }
+
+    public void setisNew(boolean isNew) {
+        this.isNew = isNew;
+    }
+
+    public boolean getIsNew(){
+        return isNew;
+    }
+
+
 
 }
