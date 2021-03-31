@@ -50,7 +50,7 @@ public  abstract class TaskRoomDatabase extends RoomDatabase {
 
             TaskRoomDatabase.databaseWriteExecutor.execute(() -> {
                 TaskDao taskDao = INSTANCE.taskDao();
-                taskDao.getTasks();
+                taskDao.deleteAll();
             });
 
         }
