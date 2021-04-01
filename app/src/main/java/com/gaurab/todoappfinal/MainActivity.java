@@ -1,9 +1,13 @@
 package com.gaurab.todoappfinal;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +24,8 @@ import com.gaurab.todoappfinal.model.TaskViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Calendar;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements OnTaskClickListener {
 
@@ -30,7 +35,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
     private SharedViewModel sharedViewModel;
-    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +61,33 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
             recyclerView.setAdapter(recyclerViewAdapter);
         });
 
+        new ItemTouchHelper(
+                new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+                    @Override
+                    public boolean onMove(@NonNull RecyclerView recyclerView,
+                                          @NonNull RecyclerView.ViewHolder viewHolder,
+                                          @NonNull RecyclerView.ViewHolder target) {
+                        return false;
+                    }
+
+                    @Override
+                    public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                        Task task = recyclerViewAdapter.getTodoAt(viewHolder.getAdapterPosition());
+                        if(direction == ItemTouchHelper.LEFT){
+                            onTodoRadioButtonClock(task);
+                        }
+                        else if(direction == ItemTouchHelper.RIGHT){
+                            onTaskClick(task);
+
+                        }
+                    }
+                }).attachToRecyclerView(recyclerView);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 sharedViewModel.setIsEdit(false);
-                sharedViewModel.setisNew(true);
                 showBottomSheetDialog();
             }
         });
@@ -98,8 +123,9 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     public void onTaskClick(Task task) {
     sharedViewModel.selectItem(task);
     sharedViewModel.setIsEdit(true);
-    sharedViewModel.setisNew(false);
     showBottomSheetDialog();
+    recyclerViewAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -108,4 +134,5 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         TaskViewModel.delete(task);
         recyclerViewAdapter.notifyDataSetChanged();
     }
+
 }

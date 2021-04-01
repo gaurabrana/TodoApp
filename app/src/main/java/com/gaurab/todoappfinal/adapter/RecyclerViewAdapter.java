@@ -42,13 +42,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         String formatted = Utils.formatDate(task.getDueDate());
 
         ColorStateList colorStateList = new ColorStateList(new int[][]{
-                new int[] {-android.R.attr.state_enabled},
-                new int[] {android.R.attr.state_enabled}
+                new int[]{-android.R.attr.state_enabled},
+                new int[]{android.R.attr.state_enabled}
         },
                 new int[]{
                         Color.LTGRAY, //disabled
                         Utils.priorityColor(task)
-        });
+                });
 
         holder.task.setText(task.getTask());
         holder.todayChip.setText(formatted);
@@ -59,9 +59,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
+
     @Override
     public int getItemCount() {
         return taskList.size();
+    }
+
+    public Task getTodoAt(int position){
+        return taskList.get(position);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -93,5 +98,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 onTaskClickListener.onTodoRadioButtonClock(currentTask);
             }
         }
+
     }
+
 }

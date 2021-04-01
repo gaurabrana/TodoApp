@@ -26,14 +26,4 @@ public class SharedViewModel extends ViewModel {
         return isEdit;
     }
 
-    public void setisNew(boolean isNew) {
-        this.isNew = isNew;
-    }
-
-    public boolean getIsNew(){
-        return isNew;
-    }
-
-
-
 }

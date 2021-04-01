@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.provider.CalendarContract;
 import android.provider.MediaStore;
@@ -33,6 +35,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class BottomSheetFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
@@ -46,12 +49,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     private CalendarView calendarView;
     private Group calendarGroup;
     private Date dueDate;
-    Calendar calendar = Calendar.getInstance();
     private SharedViewModel sharedViewModel;
     private boolean isUpdate;
     private Priority priority;
-
-    Date date;
+    Calendar calendar = Utils.getNewCalendarInstance();
 
     public BottomSheetFragment() {
 
@@ -61,9 +62,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-
         // Inflate the layout for this fragment
-        Log.d("really","new");
         View view = inflater.inflate(R.layout.bottom_sheet, container, false);
         calendarGroup = view.findViewById(R.id.calendar_group);
         calendarView = view.findViewById(R.id.calendar_view);
@@ -79,9 +78,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         Chip nextWeekChip = view.findViewById(R.id.next_week_chip);
         nextWeekChip.setOnClickListener(this);
 
-
-        date = calendar.getTime();
-
         return view;
     }
 
@@ -89,22 +85,16 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         super.onViewCreated(view, savedInstanceState);
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        calendar.setTime(date);
-        priorityRadioGroup.clearCheck();
-        entertask.setText("");
 
-        calenderButton.setOnClickListener(v -> {
+            calenderButton.setOnClickListener(v -> {
             calendarGroup.setVisibility(calendarGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
             Utils.hideSoftKeyboard(v);
         });
-
-
 
         calendarView.setOnDateChangeListener((view12, year, month, dayOfMonth) -> {
             calendar.clear();
             calendar.set(year, month, dayOfMonth);
             dueDate = calendar.getTime();
-            calendar.setTime(date);
         });
 
         priorityButton.setOnClickListener(view2 -> {
@@ -159,12 +149,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
                     updateTask.setDueDate(dueDate);
                     TaskViewModel.update(updateTask);
                     sharedViewModel.setIsEdit(false);
-                    calendar.setTime(date);
                 }
                 else{
                     Task myTask = new Task(task, priority, dueDate, Calendar.getInstance().getTime(), false);
                     TaskViewModel.insert(myTask);
-                    calendar.setTime(date);
                 }
                 if(this.isVisible()){
                     this.dismiss();
@@ -189,7 +177,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
             calendar.add(Calendar.DAY_OF_YEAR, 7);
             dueDate = calendar.getTime();
         }
-        calendar.setTime(date);
     }
 
     @Override
@@ -197,12 +184,11 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         super.onResume();
         if (sharedViewModel.getSelectedItem().getValue() != null){
             isUpdate = sharedViewModel.getIsEdit();
-            if(!sharedViewModel.getIsNew()){
+            if(isUpdate){
                 Task task = sharedViewModel.getSelectedItem().getValue();
                 entertask.setText(task.getTask());
             }
             else{
-                calendar.setTime(date);
                 priorityRadioGroup.clearCheck();
                 entertask.setText("");
             }

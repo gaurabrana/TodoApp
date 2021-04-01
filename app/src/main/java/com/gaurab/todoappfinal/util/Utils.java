@@ -9,6 +9,7 @@ import com.gaurab.todoappfinal.model.Priority;
 import com.gaurab.todoappfinal.model.Task;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Utils {
@@ -34,5 +35,28 @@ public class Utils {
         }
         return color;
     }
+
+    public static Calendar getNewCalendarInstance() {
+        Calendar calendar = Calendar.getInstance();
+        return resetCalender(calendar);
+    }
+
+    public static Date resetDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return resetCalender(calendar).getTime();
+    }
+    public static Calendar resetCalender(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+    public static void setTimeInCalendar(Calendar calendar, Date date) {
+        calendar.setTime(resetDate(date));
+    }
+
+
 
 }
