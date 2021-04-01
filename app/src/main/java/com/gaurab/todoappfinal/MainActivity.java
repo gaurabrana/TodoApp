@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         builder.setMessage("Delete this task?")
                 .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                     }
                 })
                 .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
@@ -151,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         // Create the AlertDialog object and return it
         AlertDialog dialog = builder.create();
         dialog.show();
+        recyclerViewAdapter.notifyDataSetChanged();
     }
 
 }
