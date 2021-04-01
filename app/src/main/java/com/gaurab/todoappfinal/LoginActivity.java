@@ -27,8 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(userName.getText().toString().equals("admin") && password.getText().toString().equals("test")) {
+                if(userName.getText().toString().toLowerCase().equals("user") && password.getText().toString().toLowerCase().equals("user")) {
                     SharedPreferences preferences = getApplicationContext().getSharedPreferences("todo pref", 0);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean("authentication", true);

@@ -11,6 +11,13 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -74,11 +81,10 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
                     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                         Task task = recyclerViewAdapter.getTodoAt(viewHolder.getAdapterPosition());
                         if(direction == ItemTouchHelper.LEFT){
-                            onTodoRadioButtonClock(task);
+                            onTodoRadioButtonClick(task);
                         }
                         else if(direction == ItemTouchHelper.RIGHT){
                             onTaskClick(task);
-
                         }
                     }
                 }).attachToRecyclerView(recyclerView);
@@ -125,14 +131,26 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
     sharedViewModel.setIsEdit(true);
     showBottomSheetDialog();
     recyclerViewAdapter.notifyDataSetChanged();
-
     }
 
     @Override
-    public void onTodoRadioButtonClock(Task task) {
+    public void onTodoRadioButtonClick(Task task) {
 
-        TaskViewModel.delete(task);
-        recyclerViewAdapter.notifyDataSetChanged();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Delete this task?")
+                .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                })
+                .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        TaskViewModel.delete(task);
+                    }
+                });
+        // Create the AlertDialog object and return it
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 }

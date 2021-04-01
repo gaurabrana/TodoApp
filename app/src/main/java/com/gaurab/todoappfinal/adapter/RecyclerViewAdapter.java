@@ -52,6 +52,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.task.setText(task.getTask());
         holder.todayChip.setText(formatted);
+        holder.isCompleted.setText(task.isDone ? "Completed" : "Pending" );
         holder.todayChip.setTextColor(Utils.priorityColor(task));
         holder.todayChip.setChipIconTint(colorStateList);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -74,12 +75,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public RadioButton radioButton;
         public TextView task;
         public Chip todayChip;
+        private TextView isCompleted;
 
         OnTaskClickListener onTaskClickListener;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             radioButton = itemView.findViewById(R.id.todo_radio_button);
+            isCompleted = itemView.findViewById(R.id.status);
             task = itemView.findViewById(R.id.todo_row_todo);
             todayChip = itemView.findViewById(R.id.todo_row_chip);
             this.onTaskClickListener =  taskClickListener;
@@ -95,7 +98,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 onTaskClickListener.onTaskClick(currentTask);
             }
             else if (id == R.id.todo_radio_button){
-                onTaskClickListener.onTodoRadioButtonClock(currentTask);
+                onTaskClickListener.onTodoRadioButtonClick(currentTask);
             }
         }
 

@@ -1,6 +1,8 @@
 package com.gaurab.todoappfinal;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.LightingColorFilter;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.provider.CalendarContract;
 import android.provider.MediaStore;
 import android.text.TextUtils;
@@ -22,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.gaurab.todoappfinal.model.Priority;
 import com.gaurab.todoappfinal.model.SharedViewModel;
@@ -52,6 +56,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     private SharedViewModel sharedViewModel;
     private boolean isUpdate;
     private Priority priority;
+    private boolean task_status;
+    private ImageButton isCompleted;
     Calendar calendar = Utils.getNewCalendarInstance();
 
     public BottomSheetFragment() {
@@ -68,6 +74,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         calendarView = view.findViewById(R.id.calendar_view);
         calenderButton = view.findViewById(R.id.today_calendar_button);
         entertask = view.findViewById(R.id.enter_todo_et);
+        isCompleted = view.findViewById(R.id.complete_status);
         saveButton = view.findViewById(R.id.save_todo_button);
         priorityButton = view.findViewById(R.id.priority_todo_button);
         priorityRadioGroup = view.findViewById(R.id.radioGroup_priority);
@@ -85,8 +92,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         super.onViewCreated(view, savedInstanceState);
 
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-
-            calenderButton.setOnClickListener(v -> {
+        calenderButton.setOnClickListener(v -> {
             calendarGroup.setVisibility(calendarGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
             Utils.hideSoftKeyboard(v);
         });
@@ -100,66 +106,97 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         priorityButton.setOnClickListener(view2 -> {
             Utils.hideSoftKeyboard(view2);
             priorityRadioGroup.setVisibility(priorityRadioGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-            if(isUpdate){
+            if (isUpdate) {
                 priorityRadioGroup.clearCheck();
                 Task selectedTask = sharedViewModel.getSelectedItem().getValue();
                 priority = selectedTask.getPriority();
-                if(priority == Priority.HIGH){
+                if (priority == Priority.HIGH) {
                     priorityRadioGroup.check(R.id.radioButton_high);
-                }
-                else if(priority == Priority.MEDIUM){
+                } else if (priority == Priority.MEDIUM) {
                     priorityRadioGroup.check(R.id.radioButton_med);
-                }
-                else if(priority == Priority.LOW){
+                } else if (priority == Priority.LOW) {
                     priorityRadioGroup.check(R.id.radioButton_low);
                 }
 
             }
             priorityRadioGroup.setOnCheckedChangeListener((radioGroup, checkedId) -> {
-                if (priorityRadioGroup.getVisibility() == View.VISIBLE){
-                   selectedButtonId = checkedId;
-                   selectedRadioButton = view.findViewById(selectedButtonId);
-                   if (selectedRadioButton.getId() == R.id.radioButton_high){
-                       priority = Priority.HIGH;
-                   }
-                   else if (selectedRadioButton.getId() == R.id.radioButton_med){
-                       priority = Priority.MEDIUM;
-                   }
-                   else if (selectedRadioButton.getId() == R.id.radioButton_low){
-                       priority = Priority.LOW;
-                   }
-                   else{
-                       priority = Priority.LOW;
-                   }
-                }
-                else{
+                if (priorityRadioGroup.getVisibility() == View.VISIBLE) {
+                    selectedButtonId = checkedId;
+                    selectedRadioButton = view.findViewById(selectedButtonId);
+                    if (selectedRadioButton.getId() == R.id.radioButton_high) {
+                        priority = Priority.HIGH;
+                    } else if (selectedRadioButton.getId() == R.id.radioButton_med) {
+                        priority = Priority.MEDIUM;
+                    } else if (selectedRadioButton.getId() == R.id.radioButton_low) {
+                        priority = Priority.LOW;
+                    } else {
+                        priority = Priority.LOW;
+                    }
+                } else {
                     priority = Priority.LOW;
                 }
             });
         });
 
+        isCompleted.setOnClickListener(v -> {
+                if(task_status) {
+                    task_status = false;
+                    isCompleted.setColorFilter(Color.RED);
+                }
+            else{
+                task_status = true;
+                isCompleted.setColorFilter(getResources().getColor(R.color.buttons));
+            }
+        });
+
         saveButton.setOnClickListener(view1 -> {
             String task = entertask.getText().toString().trim();
-            if (!TextUtils.isEmpty(task) && dueDate != null && priority!=null) {
-                if(isUpdate){
+            if (!TextUtils.isEmpty(task) && dueDate != null && priority != null) {
+                if (isUpdate) {
                     Task updateTask = sharedViewModel.getSelectedItem().getValue();
                     updateTask.setTask(task);
                     updateTask.setDateCreated(Calendar.getInstance().getTime());
                     updateTask.setPriority(priority);
                     updateTask.setDueDate(dueDate);
+                    updateTask.setDone(task_status);
                     TaskViewModel.update(updateTask);
                     sharedViewModel.setIsEdit(false);
-                }
-                else{
+                } else {
                     Task myTask = new Task(task, priority, dueDate, Calendar.getInstance().getTime(), false);
                     TaskViewModel.insert(myTask);
                 }
-                if(this.isVisible()){
+                if (this.isVisible()) {
                     this.dismiss();
                 }
-            }
-            else{
-                Snackbar.make(saveButton,R.string.empty_field,Snackbar.LENGTH_LONG).show();
+            } else {
+                if (TextUtils.isEmpty(task)) {
+                    entertask.requestFocus();
+                    entertask.setError("Empty Field");
+                } else if (dueDate == null) {
+                    calenderButton.requestFocus();
+                    calenderButton.setBackgroundColor(getResources().getColor(R.color.primary));
+                    if (calendarView.getVisibility() == View.GONE) {
+                        calenderButton.performClick();
+                    }
+                    new Handler().postDelayed(new Runnable() {
+
+                        public void run() {
+                            calenderButton.setBackgroundColor(Color.WHITE);
+                        }
+                    }, 3000);
+                } else if (priority == null) {
+                    priorityButton.requestFocus();
+                    if (priorityRadioGroup.getVisibility() == View.GONE) {
+                        priorityButton.performClick();
+                    }
+                    new Handler().postDelayed(new Runnable() {
+
+                        public void run() {
+                            priorityButton.setBackgroundColor(Color.WHITE);
+                        }
+                    }, 3000);
+                }
+
             }
         });
     }
@@ -182,13 +219,21 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     @Override
     public void onResume() {
         super.onResume();
-        if (sharedViewModel.getSelectedItem().getValue() != null){
+        if (sharedViewModel.getSelectedItem().getValue() != null) {
             isUpdate = sharedViewModel.getIsEdit();
-            if(isUpdate){
+            if (isUpdate) {
                 Task task = sharedViewModel.getSelectedItem().getValue();
                 entertask.setText(task.getTask());
-            }
-            else{
+                dueDate = task.getDueDate();
+                priority = task.getPriority();
+                task_status = task.isDone();
+                isCompleted.setVisibility(View.VISIBLE);
+                if (task_status) {
+                    isCompleted.setColorFilter(getResources().getColor(R.color.buttons));
+                } else {
+                    isCompleted.setColorFilter(Color.RED);
+                }
+            } else {
                 priorityRadioGroup.clearCheck();
                 entertask.setText("");
             }
