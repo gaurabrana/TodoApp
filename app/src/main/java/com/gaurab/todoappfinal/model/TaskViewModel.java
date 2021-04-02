@@ -22,9 +22,11 @@ public class TaskViewModel extends AndroidViewModel {
     public LiveData<List<Task>> getallTasks() {
         return allTasks;
     }
+
     public static void insert(Task task){
         repository.insert(task);
     }
+
     public LiveData<List<Task>> getSingleTask(long id){
         return repository.getSingleTask(id);
     }
@@ -40,6 +42,8 @@ public class TaskViewModel extends AndroidViewModel {
     public static void deleteAll(){
         repository.deleteAll();
     }
+
+    public static void deleteCompleted(){repository.deleteCompleted();}
 
 
 }

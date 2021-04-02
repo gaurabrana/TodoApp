@@ -7,9 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 
-import com.gaurab.todoappfinal.LoginActivity;
-import com.gaurab.todoappfinal.MainActivity;
-import com.gaurab.todoappfinal.R;
 
 public class SplashActivity extends AppCompatActivity {
 

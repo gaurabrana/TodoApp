@@ -8,10 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.gaurab.todoappfinal.MainActivity;
-import com.gaurab.todoappfinal.R;
 
 public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
@@ -27,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(userName.getText().toString().toLowerCase().equals("user") && password.getText().toString().toLowerCase().equals("user")) {
+                if(userName.getText().toString().trim().toLowerCase().equals("user") && password.getText().toString().trim().toLowerCase().equals("user")) {
                     SharedPreferences preferences = getApplicationContext().getSharedPreferences("todo pref", 0);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean("authentication", true);

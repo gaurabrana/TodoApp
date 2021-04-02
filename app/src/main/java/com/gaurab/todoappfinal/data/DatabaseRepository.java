@@ -56,6 +56,8 @@ public class DatabaseRepository {
         new deleteAllTodoAysncTask(taskDao).execute();
     }
 
+    public void deleteCompleted(){new deleteCompletedTodoAsyncTask(taskDao).execute();}
+
     private static class insertTodoAysncTask extends AsyncTask<Task, Void, Void> {
         private TaskDao taskDao;
         private insertTodoAysncTask(TaskDao taskDao){
@@ -65,6 +67,19 @@ public class DatabaseRepository {
         @Override
         protected Void doInBackground(Task... task) {
             taskDao.insert(task[0]);
+            return null;
+        }
+    }
+
+    private static class deleteCompletedTodoAsyncTask extends AsyncTask<Task, Void, Void> {
+        private TaskDao taskDao;
+        private deleteCompletedTodoAsyncTask(TaskDao taskDao){
+            this.taskDao=taskDao;
+        }
+
+        @Override
+        protected Void doInBackground(Task... task) {
+            taskDao.deleteCompleted();
             return null;
         }
     }

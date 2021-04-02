@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,11 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.RectF;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,9 +23,6 @@ import com.gaurab.todoappfinal.model.Task;
 import com.gaurab.todoappfinal.model.TaskViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
-
 
 public class MainActivity extends AppCompatActivity implements OnTaskClickListener {
 
@@ -118,10 +108,14 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if(id == R.id.action_deletCompleted){
+            TaskViewModel.deleteCompleted();
             return true;
         }
-
+        if(id == R.id.action_deleteAll){
+            TaskViewModel.deleteAll();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
