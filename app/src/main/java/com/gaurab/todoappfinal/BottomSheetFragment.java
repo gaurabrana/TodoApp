@@ -58,7 +58,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     private Priority priority;
     private boolean task_status;
     private ImageButton isCompleted;
-    Calendar calendar = Utils.getNewCalendarInstance();
+    Calendar calendar;
+    Date date;
 
     public BottomSheetFragment() {
 
@@ -73,7 +74,9 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
         calendarGroup = view.findViewById(R.id.calendar_group);
         calendarView = view.findViewById(R.id.calendar_view);
         calenderButton = view.findViewById(R.id.today_calendar_button);
+        calendar = Utils.getNewCalendarInstance();
         entertask = view.findViewById(R.id.enter_todo_et);
+        date = calendar.getTime();
         isCompleted = view.findViewById(R.id.complete_status);
         saveButton = view.findViewById(R.id.save_todo_button);
         priorityButton = view.findViewById(R.id.priority_todo_button);
@@ -91,7 +94,10 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        isUpdate = sharedViewModel.getIsEdit();
         calenderButton.setOnClickListener(v -> {
             calendarGroup.setVisibility(calendarGroup.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
             Utils.hideSoftKeyboard(v);
@@ -101,6 +107,8 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
             calendar.clear();
             calendar.set(year, month, dayOfMonth);
             dueDate = calendar.getTime();
+            calendar.clear();
+            calendar.setTime(date);
         });
 
         priorityButton.setOnClickListener(view2 -> {
@@ -203,6 +211,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment implements Vi
 
     @Override
     public void onClick(View v) {
+        calendar.setTime(date);
         int id = v.getId();
         if (id == R.id.today_chip) {
             calendar.add(Calendar.DAY_OF_YEAR, 0);

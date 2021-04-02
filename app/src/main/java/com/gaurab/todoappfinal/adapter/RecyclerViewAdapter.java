@@ -3,9 +3,11 @@ package com.gaurab.todoappfinal.adapter;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Build;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -75,7 +77,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public RadioButton radioButton;
         public TextView task;
         public Chip todayChip;
-        private TextView isCompleted;
+        public TextView isCompleted;
+        public Button shareButton;
 
         OnTaskClickListener onTaskClickListener;
 
@@ -85,9 +88,11 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             isCompleted = itemView.findViewById(R.id.status);
             task = itemView.findViewById(R.id.todo_row_todo);
             todayChip = itemView.findViewById(R.id.todo_row_chip);
+            shareButton = itemView.findViewById(R.id.share_task_details);
             this.onTaskClickListener =  taskClickListener;
             itemView.setOnClickListener(this);
             radioButton.setOnClickListener(this);
+            shareButton.setOnClickListener(this);
         }
 
         @Override
@@ -99,6 +104,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             }
             else if (id == R.id.todo_radio_button){
                 onTaskClickListener.onTodoRadioButtonClick(currentTask);
+            }
+            else if(id == R.id.share_task_details){
+                onTaskClickListener.onButtonClick(currentTask);
             }
         }
 

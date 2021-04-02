@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ShareCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +25,7 @@ import com.gaurab.todoappfinal.adapter.RecyclerViewAdapter;
 import com.gaurab.todoappfinal.model.SharedViewModel;
 import com.gaurab.todoappfinal.model.Task;
 import com.gaurab.todoappfinal.model.TaskViewModel;
+import com.gaurab.todoappfinal.util.Utils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -107,13 +112,40 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+
         //noinspection SimplifiableIfStatement
         if(id == R.id.action_deletCompleted){
-            TaskViewModel.deleteCompleted();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Delete Completed task?")
+                    .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    })
+                    .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            TaskViewModel.deleteCompleted();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            AlertDialog dialog = builder.create();
+            dialog.show();
             return true;
         }
         if(id == R.id.action_deleteAll){
-            TaskViewModel.deleteAll();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("Delete all tasks?")
+                    .setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                        }
+                    })
+                    .setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            TaskViewModel.deleteAll();
+                        }
+                    });
+            // Create the AlertDialog object and return it
+            AlertDialog dialog = builder.create();
+            dialog.show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -145,6 +177,18 @@ public class MainActivity extends AppCompatActivity implements OnTaskClickListen
         AlertDialog dialog = builder.create();
         dialog.show();
         recyclerViewAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onButtonClick(Task task) {
+        String text = task.getTask() + " : " + Utils.formatDate(task.getDueDate()) + " : " + task.getPriority();
+        String mimeType = "text/plain";
+        ShareCompat.IntentBuilder
+                .from(this)
+                .setType(mimeType)
+                .setChooserTitle("Share this task with:")
+                .setText(text)
+                .startChooser();
     }
 
 }

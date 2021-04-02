@@ -9,6 +9,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.gaurab.todoappfinal.util.Utils;
+import com.google.android.material.snackbar.Snackbar;
+
 
 public class LoginActivity extends AppCompatActivity {
     Button btnLogin;
@@ -24,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utils.hideSoftKeyboard(v);
                 if(userName.getText().toString().trim().toLowerCase().equals("user") && password.getText().toString().trim().toLowerCase().equals("user")) {
                     SharedPreferences preferences = getApplicationContext().getSharedPreferences("todo pref", 0);
                     SharedPreferences.Editor editor = preferences.edit();
@@ -37,10 +41,13 @@ public class LoginActivity extends AppCompatActivity {
                         userName.setError("Name is required");
                         return;
                     }
-                    if(password.getText().toString().equals("")){
+                    else if(password.getText().toString().equals("")){
                         password.requestFocus();
                         password.setError("Password is required");
                         return;
+                    }
+                    else{
+                        Snackbar.make(v, "Invalid User Credentials",2000).show();
                     }
                 }
             }
